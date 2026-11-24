@@ -1,0 +1,5 @@
+[
+  { "name": "SecurityLab", "url": "https://www.securitylab.ru/_Services/Export/RSS/" },
+  { "name": "Habr News", "url": "https://habr.com/ru/rss/news/?fl=ru" },
+  { "name": "Xakep", "url": "https://xakep.ru/feed/" }
+]
