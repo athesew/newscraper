@@ -2,15 +2,15 @@ package scraper
 
 import (
 	"context"
-	"fmt"
 	"time"
 
-	sources "newscraper/internal/sources"
-
 	"github.com/mmcdole/gofeed"
+
+	gen "newscraper/internal/generator"
+	sources "newscraper/internal/sources"
 )
 
-func Scrape(s sources.Source) {
+func Scrape(s sources.Source) ([]gen.Item, error) {
 	parser := gofeed.NewParser()
 	parser.Client = sources.Client
 	parser.UserAgent = "newscrapper/1.0"
@@ -20,20 +20,25 @@ func Scrape(s sources.Source) {
 
 	feed, err := parser.ParseURLWithContext(s.URL, ctx)
 	if err != nil {
-		fmt.Printf("\033[33m[error]\033[0m %v\n", err)
-		return
+		return nil, err
 	}
 
 	const limit = 15
+	var items []gen.Item
 	for i, item := range feed.Items {
 		if i >= limit {
 			break
 		}
-		fmt.Printf("\033[36m[info]\033[0m %s\n", item.Title)
-		fmt.Printf("\033[34m[src]\033[0m %s\n", item.Link)
+		var date string
 		if item.PublishedParsed != nil {
-			fmt.Printf("\033[33m[date]\033[0m %s\n", item.PublishedParsed.Format("2006-01-02 15:04"))
+			date = item.PublishedParsed.Format("2006-01-02 15:04")
 		}
-		fmt.Printf("\033[35m[site]\033[0m %s\n\n", feed.Title)
+		items = append(items, gen.Item{
+			Title: item.Title,
+			Link:  item.Link,
+			Site:  feed.Title,
+			Date:  date,
+		})
 	}
+	return items, nil
 }
