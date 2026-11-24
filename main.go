@@ -13,7 +13,7 @@ import (
 
 func main() {
 	if err := sources.Load(); err != nil {
-		fmt.Println("[error] не могу загрузить sources.json:", err)
+		fmt.Println("[error]", err)
 		return
 	}
 
